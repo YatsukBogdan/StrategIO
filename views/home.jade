@@ -26,11 +26,11 @@ block content
             div
               .btn-group(data-toggle="buttons")
                 label.btn.btn-default.active
-                  input(type="radio", name="player-color", value="white", checked="checked")
-                  | White
+                  input(type="radio", name="player-color", value="blue", checked="checked")
+                  | Blue
                 label.btn.btn-default
-                  input(type="radio", name="player-color", value="black")
-                  | Black
+                  input(type="radio", name="player-color", value="red")
+                  | Red
           .form-group
             label(for="playerName") Name
             input#playerName.form-control(type="text", name="player-name", placeholder="Player 1")
@@ -41,6 +41,14 @@ block content
           .form-group
             label(for="gameID") Game ID
             input#gameID.form-control(type="text", name="game-id")
+          .form-group
+            label(for="playerName") Name
+            input#playerName.form-control(type="text", name="player-name", placeholder="Player 2")
+          button.btn.btn-primary(type="submit") Join Game
+    .row
+      .col-sm-6.push-sm-3
+        h2 Find the Game
+        form#joinForm(action="/find", method="POST", role="form")
           .form-group
             label(for="playerName") Name
             input#playerName.form-control(type="text", name="player-name", placeholder="Player 2")

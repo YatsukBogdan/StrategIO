@@ -43,10 +43,54 @@ var join = function(gameID) {
 
   // Emit the update event to everyone in this room/game
   IO.sockets.in(gameID).emit('update', game);
+  IO.sockets.in(gameID).emit('join', game);
 
   console.log(sess.playerName+' joined '+gameID);
 };
 
+
+var ready = function(gameID) {
+
+  var sess      = this.handshake.session;
+  var debugInfo = {
+    socketID : this.id,
+    event    : 'ready',
+    gameID   : gameID,
+    session  : sess
+  };
+
+  // Check if user has permission to access this game
+  if (gameID !== sess.gameID) {
+    console.log('ERROR: Access Denied', debugInfo);
+    this.emit('error', {message: "You cannot join this game"});
+    return;
+  }
+
+  // Lookup game in database
+  var game = DB.find(gameID);
+  if (!game) {
+    console.log('ERROR: Game Not Found', debugInfo);
+    this.emit('error', {message: "Game not found"});
+    return;
+  }
+
+  // Add user to game
+  var result = game.playerReady(sess);
+  if (!result) {
+    console.log('ERROR: Failed to Add Player', debugInfo);
+    this.emit('error', {message: "Unable to set ready status"});
+    return;
+  }
+
+  // Add user to a socket.io "room" that matches the game ID
+  this.join(gameID);
+
+  // Emit the update event to everyone in this room/game
+  IO.sockets.in(gameID).emit('update', game);
+  IO.sockets.in(gameID).emit('start', game);
+
+  console.log(sess.playerName+' ready '+gameID);
+};
 /**
  * Apply move to game
  * Emits an "update" event on success or an "error" event on failure
@@ -176,10 +220,11 @@ exports.attach = function(io, db) {
 
     // Attach the event handlers
     socket.on('join', join);
+    socket.on('ready', ready);
     socket.on('move', move);
     socket.on('forfeit', forfeit);
     socket.on('disconnect', disconnect);
 
-    console.log('Socket '+socket.id+' connected');
+    //console.log('Socket '+socket.id+' connected');
   });
 };

@@ -18,6 +18,7 @@ block content
         strong #{gameID}
 
       #opponent.player-info
+        p#opponent-ready Not Ready
         strong ...
         span.status.pull-right
         ul.captured-pieces.list-inline
@@ -25,6 +26,8 @@ block content
       table#board
         tr
           td.top-left-corner
+          td.top-edge
+          td.top-edge
           td.top-edge
           td.top-edge
           td.top-edge
@@ -44,15 +47,6 @@ block content
           td.square
           td.square
           td.square
-          td.right-edge
-        tr
-          td.left-edge
-          td.square
-          td.square
-          td.square
-          td.square
-          td.square
-          td.square
           td.square
           td.square
           td.right-edge
@@ -60,15 +54,6 @@ block content
           td.left-edge
           td.square
           td.square
-          td.square
-          td.square
-          td.square
-          td.square
-          td.square
-          td.square
-          td.right-edge
-        tr
-          td.left-edge
           td.square
           td.square
           td.square
@@ -88,15 +73,6 @@ block content
           td.square
           td.square
           td.square
-          td.right-edge
-        tr
-          td.left-edge
-          td.square
-          td.square
-          td.square
-          td.square
-          td.square
-          td.square
           td.square
           td.square
           td.right-edge
@@ -110,9 +86,52 @@ block content
           td.square
           td.square
           td.square
+          td.square
+          td.square
           td.right-edge
         tr
           td.left-edge
+          td.square
+          td.square
+          td.square
+          td.square
+          td.square
+          td.square
+          td.square
+          td.square
+          td.square
+          td.square
+          td.right-edge
+        tr
+          td.left-edge
+          td.square
+          td.square
+          td.square
+          td.square
+          td.square
+          td.square
+          td.square
+          td.square
+          td.square
+          td.square
+          td.right-edge
+        tr
+          td.left-edge
+          td.square
+          td.square
+          td.square
+          td.square
+          td.square
+          td.square
+          td.square
+          td.square
+          td.square
+          td.square
+          td.right-edge
+        tr
+          td.left-edge
+          td.square
+          td.square
           td.square
           td.square
           td.square
@@ -132,6 +151,8 @@ block content
           td.bottom-edge
           td.bottom-edge
           td.bottom-edge
+          td.bottom-edge
+          td.bottom-edge
           td.bottom-right-corner
 
       #you.player-info
@@ -139,6 +160,7 @@ block content
         span.status.pull-right
         ul.captured-pieces.list-inline
 
+      button.btn.btn-primary#ready-button(type="submit", style="visibility: hidden;") Ready
 
 
     #game-over.modal.fade(role="dialog")

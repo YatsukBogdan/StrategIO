@@ -32,7 +32,7 @@ var validateStartGame = function(req) {
   if (!req.body['player-color']) { return null; }
 
   // Player Color must be 'white' or 'black'
-  if (req.body['player-color'] !== 'white' && req.body['player-color'] !== 'black') { return null; }
+  if (req.body['player-color'] !== 'blue' && req.body['player-color'] !== 'red') { return null; }
 
   // If Player Name consists only of whitespace, set as 'Player 1'
   if (/^\s*$/.test(req.body['player-name'])) { req.body['player-name'] = 'Player 1'; }
@@ -60,6 +60,16 @@ var validateJoinGame = function(req) {
 
   return {
     gameID      : req.body['game-id'],
+    playerName  : req.body['player-name']
+  };
+};
+
+var validateFindGame = function(req) {
+
+  // If Player Name consists only of whitespace, set as 'Player 2'
+  if (/^\s*$/.test(req.body['player-name'])) { req.body['player-name'] = 'Player 2'; }
+
+  return {
     playerName  : req.body['player-name']
   };
 };
@@ -144,6 +154,33 @@ var joinGame = function(req, res) {
   });
 };
 
+
+var findGame = function(req, res) {
+
+ // Create a new session
+ req.session.regenerate(function(err) {
+   if (err) { res.redirect('/'); return; }
+
+   var validData = validateFindGame(req);
+   if (!validData) { res.redirect('/'); return; }
+
+   var game_object = DB.getRandomGame();
+   var game = game_object.game;
+   if (!game) { res.redirect('/'); return;}
+
+   // Determine which player (color) to join as
+   var joinColor = (game.players[0].joined) ? game.players[1].color : game.players[0].color;
+
+   // Save data to session
+   req.session.gameID      = game_object.key;
+   req.session.playerColor = joinColor;
+   req.session.playerName  = validData.playerName;
+
+   // Redirect to game page
+   res.redirect('/game/'+game_object.key);
+ });
+};
+
 /**
  * Redirect non-existent routes to the home page
  */
@@ -163,5 +200,6 @@ exports.attach = function(app, db) {
   app.get('/game/:id', game);
   app.post('/start',   startGame);
   app.post('/join',    joinGame);
+  app.post('/find',    findGame);
   app.all('*',         invalid);
 };

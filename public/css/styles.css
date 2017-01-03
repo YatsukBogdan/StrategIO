@@ -5,7 +5,7 @@ table { border-collapse: collapse; }
 
 #startForm, #joinForm { padding: 15px; }
 
-#game { width: 400px; margin: 0 auto 0 auto; }
+#game { width: 480px; margin: 0 auto 0 auto; }
 
 /*
  * Title Bar
@@ -47,7 +47,8 @@ table { border-collapse: collapse; }
 }
 
 #b1, #d1, #f1, #h1, #a2, #c2, #e2, #g2, #b3, #d3, #f3, #h3, #a4, #c4, #e4, #g4,
-#b5, #d5, #f5, #h5, #a6, #c6, #e6, #g6, #b7, #d7, #f7, #h7, #a8, #c8, #e8, #g8 {
+#b5, #d5, #f5, #h5, #a6, #c6, #e6, #g6, #b7, #d7, #f7, #h7, #a8, #c8, #e8, #g8,
+#j1, #j3, #j5, #j7, #i2, #i4, #i6, #i8 {
   background:#fff;
   background:-moz-linear-gradient(top, #fff, #eee);
   background:-webkit-gradient(linear,0 0, 0 100%, from(#fff), to(#eee));
@@ -57,7 +58,8 @@ table { border-collapse: collapse; }
 }
 
 #a1, #c1, #e1, #g1, #b2, #d2, #f2, #h2, #a3, #c3, #e3, #g3, #b4, #d4, #f4, #h4,
-#a5, #c5, #e5, #g5, #b6, #d6, #f6, #h6, #a7, #c7, #e7, #g7, #b8, #d8, #f8, #h8 {
+#a5, #c5, #e5, #g5, #b6, #d6, #f6, #h6, #a7, #c7, #e7, #g7, #b8, #d8, #f8, #h8,
+#j2, #j4, #j6, #j8, #i1, #i3, #i5, #i7 {
   background:#ccc;
   background:-moz-linear-gradient(top, #ccc, #eee);
   background:-webkit-gradient(linear,0 0, 0 100%, from(#ccc), to(#eee));
@@ -93,6 +95,7 @@ table { border-collapse: collapse; }
 
 #board .selected                        { color: #049cdb;                   }
 #board .valid-move:before               { color: #46a546; content: "\25cf"; }
+#board .valid-swap:before               { color: #46a546; }
 #board .valid-capture:before            { color: #46a546;                   }
 #board .valid-en-passant-capture:before { color: #46a546; content: "\25cf"; }
 #board .valid-castle:before             { color: #46a546; content: "\25cf"; }
@@ -111,15 +114,34 @@ table { border-collapse: collapse; }
  * Pieces
  */
 
-.black.pawn:before    { content: "\265F"; }
-.black.rook:before    { content: "\265C"; }
-.black.knight:before  { content: "\265E"; }
-.black.bishop:before  { content: "\265D"; }
-.black.queen:before   { content: "\265B"; }
-.black.king:before    { content: "\265A"; }
-.white.pawn:before    { content: "\2659"; }
-.white.rook:before    { content: "\2656"; }
-.white.knight:before  { content: "\2658"; }
-.white.bishop:before  { content: "\2657"; }
-.white.queen:before   { content: "\2655"; }
-.white.king:before    { content: "\2654"; }
+.blue.el1:before    { color: blue; content: "1"; }
+.blue.el2:before    { color: blue; content: "2"; }
+.blue.el3:before    { color: blue; content: "3"; }
+.blue.el4:before    { color: blue; content: "4"; }
+.blue.el5:before    { color: blue; content: "5"; }
+.blue.el6:before    { color: blue; content: "6"; }
+.blue.el7:before    { color: blue; content: "7"; }
+.blue.el8:before    { color: blue; content: "8"; }
+.blue.el9:before    { color: blue; content: "9"; }
+.blue.el10:before    { color: blue; content: "10"; }
+.blue.spy:before    { color: blue; content: "Y"; }
+.blue.spotter:before    { color: blue; content: "S"; }
+.water:before    { color: blue; content: "W"; }
+.red.el1:before    { color: red; content: "1"; }
+.red.el2:before    { color: red; content: "2"; }
+.red.el3:before    { color: red; content: "3"; }
+.red.el4:before    { color: red; content: "4"; }
+.red.el5:before    { color: red; content: "5"; }
+.red.el6:before    { color: red; content: "6"; }
+.red.el7:before    { color: red; content: "7"; }
+.red.el8:before    { color: red; content: "8"; }
+.red.el9:before    { color: red; content: "9"; }
+.red.el10:before    { color: red; content: "10"; }
+.red.spy:before    { color: red; content: "Y"; }
+.red.spotter:before    { color: red; content: "S"; }
+.red.opponent:before    { color: red; content: "?"; }
+.blue.opponent:before    { color: blue; content: "?"; }
+.red.bomb:before    { color: red; content: "B"; }
+.blue.bomb:before    { color: blue; content: "B"; }
+.red.flag:before    { color: red; content: "F"; }
+.blue.flag:before    { color: blue; content: "F"; }

@@ -35,10 +35,9 @@ var Client = (function(window) {
     squares     = board.find('.square');
 
     gameOverMessage     = $('#game-over');
-    pawnPromotionPrompt = $('#pawn-promotion');
     forfeitPrompt       = $('#forfeit-game');
 
-    gameClasses = "white black pawn rook knight bishop queen king not-moved empty selected " +
+    gameClasses = "blue red spy spotter bomb flag el2 el3 el4 el5 el6 el7 el8 el9 el10 not-moved empty selected water opponent " +
                   "valid-move valid-capture valid-en-passant-capture valid-castle last-move";
 
     // Create socket connection
@@ -53,7 +52,6 @@ var Client = (function(window) {
 
     // Initialize modal popup windows
     gameOverMessage.modal({show: false, keyboard: false, backdrop: 'static'});
-    pawnPromotionPrompt.modal({show: false, keyboard: false, backdrop: 'static'});
     forfeitPrompt.modal({show: false, keyboard: false, backdrop: 'static'});
 
     // Join game
@@ -64,20 +62,20 @@ var Client = (function(window) {
    * Assign square IDs and labels based on player's perspective
    */
   var assignSquares = function() {
-    var fileLabels = ['A', 'B', 'C', 'D', 'E', 'F', 'G', 'H'];
-    var rankLabels = [8, 7, 6, 5, 4, 3, 2, 1];
+    var fileLabels = ['A', 'B', 'C', 'D', 'E', 'F', 'G', 'H', 'I', 'J'];
+    var rankLabels = [ 8, 7, 6, 5, 4, 3, 2, 1];
     var squareIDs  = [
-      'a8', 'b8', 'c8', 'd8', 'e8', 'f8', 'g8', 'h8',
-      'a7', 'b7', 'c7', 'd7', 'e7', 'f7', 'g7', 'h7',
-      'a6', 'b6', 'c6', 'd6', 'e6', 'f6', 'g6', 'h6',
-      'a5', 'b5', 'c5', 'd5', 'e5', 'f5', 'g5', 'h5',
-      'a4', 'b4', 'c4', 'd4', 'e4', 'f4', 'g4', 'h4',
-      'a3', 'b3', 'c3', 'd3', 'e3', 'f3', 'g3', 'h3',
-      'a2', 'b2', 'c2', 'd2', 'e2', 'f2', 'g2', 'h2',
-      'a1', 'b1', 'c1', 'd1', 'e1', 'f1', 'g1', 'h1'
+      'a8', 'b8', 'c8', 'd8', 'e8', 'f8', 'g8', 'h8', 'i8', 'j8',
+      'a7', 'b7', 'c7', 'd7', 'e7', 'f7', 'g7', 'h7', 'i7', 'j7',
+      'a6', 'b6', 'c6', 'd6', 'e6', 'f6', 'g6', 'h6', 'i6', 'j6',
+      'a5', 'b5', 'c5', 'd5', 'e5', 'f5', 'g5', 'h5', 'i5', 'j5',
+      'a4', 'b4', 'c4', 'd4', 'e4', 'f4', 'g4', 'h4', 'i4', 'j4',
+      'a3', 'b3', 'c3', 'd3', 'e3', 'f3', 'g3', 'h3', 'i3', 'j3',
+      'a2', 'b2', 'c2', 'd2', 'e2', 'f2', 'g2', 'h2', 'i2', 'j2',
+      'a1', 'b1', 'c1', 'd1', 'e1', 'f1', 'g1', 'h1', 'i1', 'j1'
     ];
 
-    if (playerColor === 'black') {
+    if (playerColor === 'red') {
       fileLabels.reverse();
       rankLabels.reverse();
       squareIDs.reverse();
@@ -99,69 +97,312 @@ var Client = (function(window) {
   var attachDOMEventHandlers = function() {
 
     // Highlight valid moves for white pieces
-    if (playerColor === 'white') {
-      container.on('click', '.white.pawn', function(ev) {
-        if (gameState.activePlayer && gameState.activePlayer.color === playerColor) {
-          highlightValidMoves('wP', ev.target);
+    if (playerColor === 'blue') {
+      container.on('click', '.blue.spotter', function(ev) {
+        var player = gameState.players[0];
+        if (player.color !== playerColor) {
+          player = gameState.players[1];
+        }
+        var player = gameState.players[0];
+        if (player.color !== playerColor) {
+          player = gameState.players[1];
+        }
+        if (gameState.status == 'strategy' && !player.ready && !($(ev.target).hasClass('valid-swap'))) {
+          highlightValidMoves('bs', ev.target);
+        } else if (gameState.status === 'ongoing' && gameState.activePlayer && gameState.activePlayer.color === playerColor) {
+          highlightValidMoves('bs', ev.target);
         }
       });
-      container.on('click', '.white.rook', function(ev) {
-        if (gameState.activePlayer && gameState.activePlayer.color === playerColor) {
-          highlightValidMoves('wR', ev.target);
+      container.on('click', '.blue.spy', function(ev) {
+        var player = gameState.players[0];
+        if (player.color !== playerColor) {
+          player = gameState.players[1];
+        }
+        if (gameState.status == 'strategy' && !player.ready && !($(ev.target).hasClass('valid-swap'))) {
+          highlightValidMoves('by', ev.target);
+        } else if (gameState.status === 'ongoing' && gameState.activePlayer && gameState.activePlayer.color === playerColor) {
+          highlightValidMoves('by', ev.target);
         }
       });
-      container.on('click', '.white.knight', function(ev) {
-        if (gameState.activePlayer && gameState.activePlayer.color === playerColor) {
-          highlightValidMoves('wN', ev.target);
+      container.on('click', '.blue.flag', function(ev) {
+        var player = gameState.players[0];
+        if (player.color !== playerColor) {
+          player = gameState.players[1];
+        }
+        var player = gameState.players[0];
+        if (player.color !== playerColor) {
+          player = gameState.players[1];
+        }
+        if (gameState.status == 'strategy' && !player.ready && !($(ev.target).hasClass('valid-swap'))) {
+          highlightValidMoves('bf', ev.target);
         }
       });
-      container.on('click', '.white.bishop', function(ev) {
-        if (gameState.activePlayer && gameState.activePlayer.color === playerColor) {
-          highlightValidMoves('wB', ev.target);
+      container.on('click', '.blue.bomb', function(ev) {
+        var player = gameState.players[0];
+        if (player.color !== playerColor) {
+          player = gameState.players[1];
+        }
+        if (gameState.status == 'strategy' && !player.ready && !($(ev.target).hasClass('valid-swap'))) {
+          highlightValidMoves('bb', ev.target);
         }
       });
-      container.on('click', '.white.queen', function(ev) {
-        if (gameState.activePlayer && gameState.activePlayer.color === playerColor) {
-          highlightValidMoves('wQ', ev.target);
+
+      container.on('click', '.blue.el1', function(ev) {
+        var player = gameState.players[0];
+        if (player.color !== playerColor) {
+          player = gameState.players[1];
+        }
+        if (gameState.status == 'strategy' && !player.ready && !($(ev.target).hasClass('valid-swap'))) {
+          highlightValidMoves('b1', ev.target);
+        } else if (gameState.status === 'ongoing' && gameState.activePlayer && gameState.activePlayer.color === playerColor) {
+          highlightValidMoves('b1', ev.target);
         }
       });
-      container.on('click', '.white.king', function(ev) {
-        if (gameState.activePlayer && gameState.activePlayer.color === playerColor) {
-          highlightValidMoves('wK', ev.target);
+      container.on('click', '.blue.el2', function(ev) {
+        var player = gameState.players[0];
+        if (player.color !== playerColor) {
+          player = gameState.players[1];
+        }
+        if (gameState.status == 'strategy' && !player.ready && !($(ev.target).hasClass('valid-swap'))) {
+          highlightValidMoves('b2', ev.target);
+        } else if (gameState.status === 'ongoing' && gameState.activePlayer && gameState.activePlayer.color === playerColor) {
+          highlightValidMoves('b2', ev.target);
+        }
+      });
+      container.on('click', '.blue.el3', function(ev) {
+        var player = gameState.players[0];
+        if (player.color !== playerColor) {
+          player = gameState.players[1];
+        }
+        if (gameState.status == 'strategy' && !player.ready && !($(ev.target).hasClass('valid-swap'))) {
+          highlightValidMoves('b3', ev.target);
+        } else if (gameState.status === 'ongoing' && gameState.activePlayer && gameState.activePlayer.color === playerColor) {
+          highlightValidMoves('b3', ev.target);
+        }
+      });
+      container.on('click', '.blue.el4', function(ev) {
+        var player = gameState.players[0];
+        if (player.color !== playerColor) {
+          player = gameState.players[1];
+        }
+        if (gameState.status == 'strategy' && !player.ready && !($(ev.target).hasClass('valid-swap'))) {
+          highlightValidMoves('b4', ev.target);
+        } else if (gameState.status === 'ongoing' && gameState.activePlayer && gameState.activePlayer.color === playerColor) {
+          highlightValidMoves('b4', ev.target);
+        }
+      });
+      container.on('click', '.blue.el5', function(ev) {
+        var player = gameState.players[0];
+        if (player.color !== playerColor) {
+          player = gameState.players[1];
+        }
+        if (gameState.status == 'strategy' && !player.ready && !($(ev.target).hasClass('valid-swap'))) {
+          highlightValidMoves('b5', ev.target);
+        } else if (gameState.status === 'ongoing' && gameState.activePlayer && gameState.activePlayer.color === playerColor) {
+          highlightValidMoves('b5', ev.target);
+        }
+      });
+      container.on('click', '.blue.el6', function(ev) {
+        var player = gameState.players[0];
+        if (player.color !== playerColor) {
+          player = gameState.players[1];
+        }
+        if (gameState.status == 'strategy' && !player.ready && !($(ev.target).hasClass('valid-swap'))) {
+          highlightValidMoves('b6', ev.target);
+        } else if (gameState.status === 'ongoing' && gameState.activePlayer && gameState.activePlayer.color === playerColor) {
+          highlightValidMoves('b6', ev.target);
+        }
+      });
+      container.on('click', '.blue.el7', function(ev) {
+        var player = gameState.players[0];
+        if (player.color !== playerColor) {
+          player = gameState.players[1];
+        }
+        if (gameState.status == 'strategy' && !player.ready && !($(ev.target).hasClass('valid-swap'))) {
+          highlightValidMoves('b7', ev.target);
+        } else if (gameState.status === 'ongoing' && gameState.activePlayer && gameState.activePlayer.color === playerColor) {
+          highlightValidMoves('b7', ev.target);
+        }
+      });
+      container.on('click', '.blue.el8', function(ev) {
+        var player = gameState.players[0];
+        if (player.color !== playerColor) {
+          player = gameState.players[1];
+        }
+        if (gameState.status == 'strategy' && !player.ready && !($(ev.target).hasClass('valid-swap'))) {
+          highlightValidMoves('b8', ev.target);
+        } else if (gameState.status === 'ongoing' && gameState.activePlayer && gameState.activePlayer.color === playerColor) {
+          highlightValidMoves('b8', ev.target);
+        }
+      });
+      container.on('click', '.blue.el9', function(ev) {
+        var player = gameState.players[0];
+        if (player.color !== playerColor) {
+          player = gameState.players[1];
+        }
+        if (gameState.status == 'strategy' && !player.ready && !($(ev.target).hasClass('valid-swap'))) {
+          highlightValidMoves('b9', ev.target);
+        } else if (gameState.status === 'ongoing' && gameState.activePlayer && gameState.activePlayer.color === playerColor) {
+          highlightValidMoves('b9', ev.target);
+        }
+      });
+      container.on('click', '.blue.el10', function(ev) {
+        var player = gameState.players[0];
+        if (player.color !== playerColor) {
+          player = gameState.players[1];
+        }
+        if (gameState.status == 'strategy' && !player.ready && !($(ev.target).hasClass('valid-swap'))) {
+          highlightValidMoves('bt', ev.target);
+        } else if (gameState.status === 'ongoing' && gameState.activePlayer && gameState.activePlayer.color === playerColor) {
+          highlightValidMoves('bt', ev.target);
         }
       });
     }
-
     // Highlight valid moves for black pieces
-    if (playerColor === 'black') {
-      container.on('click', '.black.pawn',   function(ev) {
-        if (gameState.activePlayer && gameState.activePlayer.color === playerColor) {
-          highlightValidMoves('bP', ev.target);
+    if (playerColor === 'red') {
+      container.on('click', '.red.spotter', function(ev) {
+        var player = gameState.players[0];
+        if (player.color !== playerColor) {
+          player = gameState.players[1];
+        }
+        if (gameState.status == 'strategy' && !player.ready && !($(ev.target).hasClass('valid-swap'))) {
+          highlightValidMoves('rs', ev.target);
+        } else if (gameState.status === 'ongoing' && gameState.activePlayer && gameState.activePlayer.color === playerColor) {
+          highlightValidMoves('rs', ev.target);
         }
       });
-      container.on('click', '.black.rook',   function(ev) {
-        if (gameState.activePlayer && gameState.activePlayer.color === playerColor) {
-          highlightValidMoves('bR', ev.target);
+      container.on('click', '.red.spy', function(ev) {
+        var player = gameState.players[0];
+        if (player.color !== playerColor) {
+          player = gameState.players[1];
+        }
+        if (gameState.status == 'strategy' && !player.ready && !($(ev.target).hasClass('valid-swap'))) {
+          highlightValidMoves('ry', ev.target);
+        } else if (gameState.status === 'ongoing' && gameState.activePlayer && gameState.activePlayer.color === playerColor) {
+          highlightValidMoves('ry', ev.target);
         }
       });
-      container.on('click', '.black.knight', function(ev) {
-        if (gameState.activePlayer && gameState.activePlayer.color === playerColor) {
-          highlightValidMoves('bN', ev.target);
+      container.on('click', '.red.flag', function(ev) {
+        var player = gameState.players[0];
+        if (player.color !== playerColor) {
+          player = gameState.players[1];
+        }
+        var player = gameState.players[0];
+        if (player.color !== playerColor) {
+          player = gameState.players[1];
+        }
+        if (gameState.status == 'strategy' && !player.ready && !($(ev.target).hasClass('valid-swap'))) {
+          highlightValidMoves('rf', ev.target);
         }
       });
-      container.on('click', '.black.bishop', function(ev) {
-        if (gameState.activePlayer && gameState.activePlayer.color === playerColor) {
-          highlightValidMoves('bB', ev.target);
+      container.on('click', '.red.bomb', function(ev) {
+        var player = gameState.players[0];
+        if (player.color !== playerColor) {
+          player = gameState.players[1];
+        }
+        if (gameState.status == 'strategy' && !player.ready && !($(ev.target).hasClass('valid-swap'))) {
+          highlightValidMoves('rb', ev.target);
         }
       });
-      container.on('click', '.black.queen',  function(ev) {
-        if (gameState.activePlayer && gameState.activePlayer.color === playerColor) {
-          highlightValidMoves('bQ', ev.target);
+
+
+      container.on('click', '.red.el2', function(ev) {
+        var player = gameState.players[0];
+        if (player.color !== playerColor) {
+          player = gameState.players[1];
+        }
+        if (gameState.status == 'strategy' && !player.ready && !($(ev.target).hasClass('valid-swap'))) {
+          highlightValidMoves('r2', ev.target);
+        } else if (gameState.status === 'ongoing' && gameState.activePlayer && gameState.activePlayer.color === playerColor) {
+          highlightValidMoves('r2', ev.target);
         }
       });
-      container.on('click', '.black.king',   function(ev) {
-        if (gameState.activePlayer && gameState.activePlayer.color === playerColor) {
-          highlightValidMoves('bK', ev.target);
+      container.on('click', '.red.el3', function(ev) {
+        var player = gameState.players[0];
+        if (player.color !== playerColor) {
+          player = gameState.players[1];
+        }
+        if (gameState.status == 'strategy' && !player.ready && !($(ev.target).hasClass('valid-swap'))) {
+          highlightValidMoves('r3', ev.target);
+        } else if (gameState.status === 'ongoing' && gameState.activePlayer && gameState.activePlayer.color === playerColor) {
+          highlightValidMoves('r3', ev.target);
+        }
+      });
+      container.on('click', '.red.el4', function(ev) {
+        var player = gameState.players[0];
+        if (player.color !== playerColor) {
+          player = gameState.players[1];
+        }
+        if (gameState.status == 'strategy' && !player.ready && !($(ev.target).hasClass('valid-swap'))) {
+          highlightValidMoves('r4', ev.target);
+        } else if (gameState.status === 'ongoing' && gameState.activePlayer && gameState.activePlayer.color === playerColor) {
+          highlightValidMoves('r4', ev.target);
+        }
+      });
+      container.on('click', '.red.el5', function(ev) {
+        var player = gameState.players[0];
+        if (player.color !== playerColor) {
+          player = gameState.players[1];
+        }
+        if (gameState.status == 'strategy' && !player.ready && !($(ev.target).hasClass('valid-swap'))) {
+          highlightValidMoves('r5', ev.target);
+        } else if (gameState.status === 'ongoing' && gameState.activePlayer && gameState.activePlayer.color === playerColor) {
+          highlightValidMoves('r5', ev.target);
+        }
+      });
+      container.on('click', '.red.el6', function(ev) {
+        var player = gameState.players[0];
+        if (player.color !== playerColor) {
+          player = gameState.players[1];
+        }
+        if (gameState.status == 'strategy' && !player.ready && !($(ev.target).hasClass('valid-swap'))) {
+          highlightValidMoves('r6', ev.target);
+        } else if (gameState.status === 'ongoing' && gameState.activePlayer && gameState.activePlayer.color === playerColor) {
+          highlightValidMoves('r6', ev.target);
+        }
+      });
+      container.on('click', '.red.el7', function(ev) {
+        var player = gameState.players[0];
+        if (player.color !== playerColor) {
+          player = gameState.players[1];
+        }
+        if (gameState.status == 'strategy' && !player.ready && !($(ev.target).hasClass('valid-swap'))) {
+          highlightValidMoves('r7', ev.target);
+        } else if (gameState.status === 'ongoing' && gameState.activePlayer && gameState.activePlayer.color === playerColor) {
+          highlightValidMoves('r7', ev.target);
+        }
+      });
+      container.on('click', '.red.el8', function(ev) {
+        var player = gameState.players[0];
+        if (player.color !== playerColor) {
+          player = gameState.players[1];
+        }
+        if (gameState.status == 'strategy' && !player.ready && !($(ev.target).hasClass('valid-swap'))) {
+          highlightValidMoves('r8', ev.target);
+        } else if (gameState.status === 'ongoing' && gameState.activePlayer && gameState.activePlayer.color === playerColor) {
+          highlightValidMoves('r8', ev.target);
+        }
+      });
+      container.on('click', '.red.el9', function(ev) {
+        var player = gameState.players[0];
+        if (player.color !== playerColor) {
+          player = gameState.players[1];
+        }
+        if (gameState.status == 'strategy' && !player.ready && !($(ev.target).hasClass('valid-swap'))) {
+          highlightValidMoves('r9', ev.target);
+        } else if (gameState.status === 'ongoing' && gameState.activePlayer && gameState.activePlayer.color === playerColor) {
+          highlightValidMoves('r9', ev.target);
+        }
+      });
+      container.on('click', '.red.el10', function(ev) {
+        var player = gameState.players[0];
+        if (player.color !== playerColor) {
+          player = gameState.players[1];
+        }
+        if (gameState.status == 'strategy' && !player.ready && !($(ev.target).hasClass('valid-swap'))) {
+          highlightValidMoves('rt', ev.target);
+        } else if (gameState.status === 'ongoing' && gameState.activePlayer && gameState.activePlayer.color === playerColor) {
+          highlightValidMoves('rt', ev.target);
         }
       });
     }
@@ -174,35 +415,26 @@ var Client = (function(window) {
     // Perform a regular move
     container.on('click', '.valid-move', function(ev) {
       var m = move(ev.target);
+      console.log(ev.target);
 
-      // Test for pawn promotion
-      if (/wP....8/.test(m) || /bP....1/.test(m)) {
-        showPawnPromotionPrompt(function(p) {
-          // replace piece
-          messages.empty();
-          socket.emit('move', {gameID: gameID, move: m+p});
-        });
-      } else {
-        messages.empty();
-        socket.emit('move', {gameID: gameID, move: m});
-      }
+      messages.empty();
+      socket.emit('move', {gameID: gameID, move: m});
+    });
+
+    container.on('click', '.valid-swap', function(ev) {
+      var m = swap(ev.target);
+      console.log(ev.target);
+
+      messages.empty();
+      socket.emit('move', {gameID: gameID, move: m});
     });
 
     // Perform a regular capture
     container.on('click', '.valid-capture', function(ev) {
       var m = capture(ev.target);
 
-      // Test for pawn promotion
-      if (/wP....8/.test(m) || /bP....1/.test(m)) {
-        showPawnPromotionPrompt(function(p) {
-          // replace piece
-          messages.empty();
-          socket.emit('move', {gameID: gameID, move: m+p});
-        });
-      } else {
-        messages.empty();
-        socket.emit('move', {gameID: gameID, move: m});
-      }
+      messages.empty();
+      socket.emit('move', {gameID: gameID, move: m});
     });
 
     // Perform an en passant capture
@@ -212,16 +444,14 @@ var Client = (function(window) {
       socket.emit('move', {gameID: gameID, move: m+'ep'});
     });
 
-    // Perform a castle
-    container.on('click', '.valid-castle', function(ev) {
-      var m = castle(ev.target);
+    container.on('click', '#ready-button', function(ev) {
+      $(ev.target).attr('disabled', 'disabled');
       messages.empty();
-      socket.emit('move', {gameID: gameID, move: m});
+      socket.emit('ready', gameID);
     });
-
     // Forfeit game
     container.on('click', '#forfeit', function(ev) {
-      showForfeitPrompt(function(confirmed) {
+      showForfeitPrompt(function(confirmed)   {
         if (confirmed) {
           messages.empty();
           socket.emit('forfeit', gameID);
@@ -237,14 +467,34 @@ var Client = (function(window) {
 
     // Update UI with new game state
     socket.on('update', function(data) {
-      console.log(data);
       gameState = data;
       update();
     });
 
+    socket.on('join', function(data) {
+      if (data.players[0].joined && data.players[1].joined) {
+        $('#ready-button').css('visibility', 'visible');
+      }
+    });
+
+    socket.on('start', function(data) {
+      var opponent = data.players[1];
+      if (opponent.color === playerColor) {
+        opponent = data.players[0];
+      }
+      if (data.players[0].ready && data.players[1].ready) {
+        $('#ready-button').css('visibility', 'hidden');
+        $('#opponent-ready').css('visibility', 'hidden');
+      }
+      var text = 'Not Ready';
+      if (opponent.ready) {
+        var text = 'Ready';
+      }
+      $('#opponent-ready').text(text);
+    });
+
     // Display an error
     socket.on('error', function(data) {
-      console.log(data);
       showErrorMessage(data);
     });
   };
@@ -263,13 +513,25 @@ var Client = (function(window) {
       file:  square.attr('id')[0],
       rank:  square.attr('id')[1]
     };
-
     // Highlight the selected square
     squares.removeClass('selected');
     square.addClass('selected');
 
+    var str = '';
+    var i = 0;
+    for (square1 in gameState.board) {
+      str += square1 + ':' + gameState.board[square1] + ' ';
+      if (i == 9) {
+        str += '\n';
+        i = -1;
+        console.log(str);
+        str = '';
+      }
+      i++;
+    }
+
     // Highlight any valid moves
-    squares.removeClass('valid-move valid-capture valid-en-passant-capture valid-castle');
+    squares.removeClass('valid-move valid-swap valid-capture valid-en-passant-capture valid-castle');
     for (var i=0; i<gameState.validMoves.length; i++) {
       move = gameState.validMoves[i];
 
@@ -289,19 +551,10 @@ var Client = (function(window) {
         }
       }
 
-      if (move.type === 'castle') {
-        if (move.pieceCode === piece) {
-          if (move.pieceCode[0] === 'w' && move.boardSide === 'queen') {
-            $('#c1').addClass('valid-castle');
-          }
-          if (move.pieceCode[0] === 'w' && move.boardSide === 'king') {
-            $('#g1').addClass('valid-castle');
-          }
-          if (move.pieceCode[0] === 'b' && move.boardSide === 'queen') {
-            $('#c8').addClass('valid-castle');
-          }
-          if (move.pieceCode[0] === 'b' && move.boardSide === 'king') {
-            $('#g8').addClass('valid-castle');
+      if (move.type === 'swap') {
+        if (move.startSquare === square.attr('id')) {
+          if (move.swapSquare === move.endSquare) {
+            $('#'+move.endSquare).addClass('valid-swap');
           }
         }
       }
@@ -314,6 +567,7 @@ var Client = (function(window) {
   var clearHighlights = function() {
     squares.removeClass('selected');
     squares.removeClass('valid-move');
+    squares.removeClass('valid-swap');
     squares.removeClass('valid-capture');
     squares.removeClass('valid-en-passant-capture');
     squares.removeClass('valid-castle');
@@ -327,16 +581,37 @@ var Client = (function(window) {
     var src   = $('#'+selection.file+selection.rank);
     var dest  = $(destinationSquare);
 
+    console.log('#'+selection.file+selection.rank);
+    console.log(destinationSquare);
     clearHighlights();
 
     // Move piece on board
-    src.removeClass(getPieceClasses(piece)).addClass('empty');
+    src.removeClass(gameClasses).addClass('empty');
     dest.removeClass('empty').addClass(getPieceClasses(piece));
 
     // Return move string
     return piece+selection.file+selection.rank+'-'+dest.attr('id');
   };
 
+  var swap = function(destinationSquare) {
+    var piece = selection.color + selection.piece;
+    var src   = $('#' + selection.file + selection.rank);
+    var dest  = $(destinationSquare);
+    var new_dest_classes = src.attr('class');
+    var new_src_classes  = dest.attr('class');
+
+    console.log(new_dest_classes);
+    console.log(new_src_classes);
+
+    src.removeClass().addClass(new_src_classes);
+    dest.removeClass().addClass(new_dest_classes);
+
+    clearHighlights();
+
+    // Return move string
+    console.log(piece + selection.file + selection.rank + '.' + dest.attr('id'));
+    return piece+selection.file + selection.rank + '.' + dest.attr('id');
+  }
   /**
    * Move selected piece to destination square and capture an opponents piece
    */
@@ -355,55 +630,6 @@ var Client = (function(window) {
     return piece+selection.file+selection.rank+'x'+dest.attr('id');
   };
 
-  /**
-   * Castle the selected king
-   */
-  var castle = function(destinationSquare) {
-    var moveString = '';
-
-    clearHighlights();
-
-    switch (destinationSquare.id) {
-
-      // White queenside castle
-      case 'c1':
-        $('e1').removeClass(gameClasses).addClass('empty');
-        $('c1').removeClass('empty').addClass(getPieceClasses('wK'));
-        $('a1').removeClass(gameClasses).addClass('empty');
-        $('d1').removeClass('empty').addClass(getPieceClasses('wR'));
-        moveString = 'wK0-0-0';
-        break;
-
-      // White kingside castle
-      case 'g1':
-        $('e1').removeClass(gameClasses).addClass('empty');
-        $('g1').removeClass('empty').addClass(getPieceClasses('wK'));
-        $('h1').removeClass(gameClasses).addClass('empty');
-        $('f1').removeClass('empty').addClass(getPieceClasses('wR'));
-        moveString = 'wK0-0';
-        break;
-
-      // Black queenside castle
-      case 'c8':
-        $('e8').removeClass(gameClasses).addClass('empty');
-        $('c8').removeClass('empty').addClass(getPieceClasses('bK'));
-        $('a8').removeClass(gameClasses).addClass('empty');
-        $('d8').removeClass('empty').addClass(getPieceClasses('bR'));
-        moveString = 'bK0-0-0';
-        break;
-
-      // Black kingside castle
-      case 'g8':
-        $('e8').removeClass(gameClasses).addClass('empty');
-        $('g8').removeClass('empty').addClass(getPieceClasses('bK'));
-        $('h8').removeClass(gameClasses).addClass('empty');
-        $('f8').removeClass('empty').addClass(getPieceClasses('bR'));
-        moveString = 'bK0-0';
-        break;
-    }
-
-    return moveString;
-  }
 
   /**
    * Update UI from game state
@@ -448,12 +674,12 @@ var Client = (function(window) {
       }
 
       // Captured Pieces
-      captures.empty();
+      /*captures.empty();
       for (var j=0; j<gameState.capturedPieces.length; j++) {
         if (gameState.capturedPieces[j][0] !== gameState.players[i].color[0]) {
           captures.append('<li class="'+getPieceClasses(gameState.capturedPieces[j])+'"></li>');
         }
-      }
+      }*/
     }
 
     // Update board
@@ -467,30 +693,15 @@ var Client = (function(window) {
         $('#'+gameState.lastMove.startSquare).addClass('last-move');
         $('#'+gameState.lastMove.endSquare).addClass('last-move');
       }
-      else if (gameState.lastMove.type === 'castle') {
-        if (gameState.lastMove.pieceCode === 'wK' && gameState.lastMove.boardSide === 'queen') {
-          $('#e1').addClass('last-move');
-          $('#c1').addClass('last-move');
-        }
-        if (gameState.lastMove.pieceCode === 'wK' && gameState.lastMove.boardSide === 'king') {
-          $('#e1').addClass('last-move');
-          $('#g1').addClass('last-move');
-        }
-        if (gameState.lastMove.pieceCode === 'bK' && gameState.lastMove.boardSide === 'queen') {
-          $('#e8').addClass('last-move');
-          $('#c8').addClass('last-move');
-        }
-        if (gameState.lastMove.pieceCode === 'bK' && gameState.lastMove.boardSide === 'king') {
-          $('#e8').addClass('last-move');
-          $('#g8').addClass('last-move');
-        }
-      }
     }
 
     // Test for checkmate
     if (gameState.status === 'checkmate') {
-      if (opponent.inCheck) { showGameOverMessage('checkmate-win');  }
-      if (you.inCheck)      { showGameOverMessage('checkmate-lose'); }
+      if (gameState.looser_color !== playerColor) {
+        showGameOverMessage('checkmate-win');
+      } else {
+        showGameOverMessage('checkmate-lose');
+      }
     }
 
     // Test for stalemate
@@ -541,20 +752,6 @@ var Client = (function(window) {
   /**
    * Display the "Pawn Promotion" prompt
    */
-  var showPawnPromotionPrompt = function(callback) {
-
-    // Set the pieces' color to match the player's color
-    pawnPromotionPrompt.find('label').removeClass('black white').addClass(playerColor);
-
-    // Temporarily attach click handler for the Promote button, note the use of .one()
-    pawnPromotionPrompt.one('click', 'button', function(ev) {
-      var selection = pawnPromotionPrompt.find("input[type='radio'][name='promotion']:checked").val();
-      callback('p'+selection);
-      pawnPromotionPrompt.modal('hide');
-    });
-
-    pawnPromotionPrompt.modal('show');
-  };
 
   /**
    * Display the "Forfeit Game" confirmation prompt
@@ -580,32 +777,72 @@ var Client = (function(window) {
    * Get the corresponding CSS classes for a given piece
    */
   var getPieceClasses = function(piece) {
-    switch (piece) {
-      case 'bP'  : return 'black pawn';
-      case 'bP_' : return 'black pawn not-moved';
-      case 'bR'  : return 'black rook';
-      case 'bR_' : return 'black rook not-moved';
-      case 'bN'  : return 'black knight';
-      case 'bN_' : return 'black knight not-moved';
-      case 'bB'  : return 'black bishop';
-      case 'bB_' : return 'black bishop not-moved';
-      case 'bQ'  : return 'black queen';
-      case 'bQ_' : return 'black queen not-moved';
-      case 'bK'  : return 'black king';
-      case 'bK_' : return 'black king not-moved';
-      case 'wP'  : return 'white pawn';
-      case 'wP_' : return 'white pawn not-moved';
-      case 'wR'  : return 'white rook';
-      case 'wR_' : return 'white rook not-moved';
-      case 'wN'  : return 'white knight';
-      case 'wN_' : return 'white knight not-moved';
-      case 'wB'  : return 'white bishop';
-      case 'wB_' : return 'white bishop not-moved';
-      case 'wQ'  : return 'white queen';
-      case 'wQ_' : return 'white queen not-moved';
-      case 'wK'  : return 'white king';
-      case 'wK_' : return 'white king not-moved';
-      default    : return 'empty';
+    if (playerColor === 'blue') {
+      switch (piece) {
+        case 'b1'  : return 'blue el1';
+        case 'b2'  : return 'blue el2';
+        case 'b3'  : return 'blue el3';
+        case 'b4'  : return 'blue el4';
+        case 'b5'  : return 'blue el5';
+        case 'b6'  : return 'blue el6';
+        case 'b7'  : return 'blue el7';
+        case 'b8'  : return 'blue el8';
+        case 'b9'  : return 'blue el9';
+        case 'bt'  : return 'blue el10';
+        case 'bs'  : return 'blue spotter';
+        case 'by'  : return 'blue spy';
+        case 'bb'  : return 'blue bomb';
+        case 'bf' : return 'blue flag';
+        case 'r1'  : return 'red opponent';
+        case 'r2'  : return 'red opponent';
+        case 'r3'  : return 'red opponent';
+        case 'r4'  : return 'red opponent';
+        case 'r5'  : return 'red opponent';
+        case 'r6'  : return 'red opponent';
+        case 'r7'  : return 'red opponent';
+        case 'r8'  : return 'red opponent';
+        case 'r9'  : return 'red opponent';
+        case 'rt'  : return 'red opponent';
+        case 'rs'  : return 'red opponent';
+        case 'ry'  : return 'red opponent';
+        case 'rf' : return 'red opponent';
+        case 'rb'  : return 'red opponent';
+        case 'w' : return 'water';
+        default    : return 'empty';
+      }
+    } else {
+      switch (piece) {
+        case 'b1'  : return 'blue opponent';
+        case 'b2'  : return 'blue opponent';
+        case 'b3'  : return 'blue opponent';
+        case 'b4'  : return 'blue opponent';
+        case 'b5'  : return 'blue opponent';
+        case 'b6'  : return 'blue opponent';
+        case 'b7'  : return 'blue opponent';
+        case 'b8'  : return 'blue opponent';
+        case 'b9'  : return 'blue opponent';
+        case 'bt'  : return 'blue opponent';
+        case 'bs'  : return 'blue opponent';
+        case 'by'  : return 'blue opponent';
+        case 'bf'  : return 'blue opponent';
+        case 'bb'  : return 'blue opponent';
+        case 'r1'  : return 'red el1';
+        case 'r2'  : return 'red el2';
+        case 'r3'  : return 'red el3';
+        case 'r4'  : return 'red el4';
+        case 'r5'  : return 'red el5';
+        case 'r6'  : return 'red el6';
+        case 'r7'  : return 'red el7';
+        case 'r8'  : return 'red el8';
+        case 'r9'  : return 'red el9';
+        case 'rt'  : return 'red el10';
+        case 'rs'  : return 'red spotter';
+        case 'ry'  : return 'red spy';
+        case 'rf'  : return 'red flag';
+        case 'rb'  : return 'red bomb';
+        case 'w' : return 'water';
+        default    : return 'empty';
+      }
     }
   };
 

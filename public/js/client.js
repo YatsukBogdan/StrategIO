@@ -19,6 +19,8 @@ var Client = (function(window) {
   var gameOverMessage     = null;
   var pawnPromotionPrompt = null;
   var forfeitPrompt       = null;
+  var spotterChoosePropmpt = null;
+  var spotterChoosedPiece = null;
 
 
   /**
@@ -36,7 +38,8 @@ var Client = (function(window) {
 
     gameOverMessage     = $('#game-over');
     forfeitPrompt       = $('#forfeit-game');
-
+    spotterChoosePropmpt = $('#spotter-choose-piece');
+    spotterChoosedPiece = '1';
     gameClasses = "blue red spy spotter bomb flag el2 el3 el4 el5 el6 el7 el8 el9 el10 not-moved empty selected water opponent " +
                   "valid-move valid-capture valid-en-passant-capture valid-castle last-move";
 
@@ -53,6 +56,7 @@ var Client = (function(window) {
     // Initialize modal popup windows
     gameOverMessage.modal({show: false, keyboard: false, backdrop: 'static'});
     forfeitPrompt.modal({show: false, keyboard: false, backdrop: 'static'});
+    spotterChoosePropmpt.modal({show: false, keyboard: false, backdrop: 'static'});
 
     // Join game
     socket.emit('join', gameID);
@@ -111,6 +115,9 @@ var Client = (function(window) {
           highlightValidMoves('bs', ev.target);
         } else if (gameState.status === 'ongoing' && gameState.activePlayer && gameState.activePlayer.color === playerColor) {
           highlightValidMoves('bs', ev.target);
+          showSpotterPrompt(function(piece){
+            spotterChoosedPiece = piece;
+          });
         }
       });
       container.on('click', '.blue.spy', function(ev) {
@@ -269,6 +276,9 @@ var Client = (function(window) {
           highlightValidMoves('rs', ev.target);
         } else if (gameState.status === 'ongoing' && gameState.activePlayer && gameState.activePlayer.color === playerColor) {
           highlightValidMoves('rs', ev.target);
+          showSpotterPrompt(function(piece){
+            spotterChoosedPiece = piece;
+          });
         }
       });
       container.on('click', '.red.spy', function(ev) {
@@ -437,6 +447,13 @@ var Client = (function(window) {
       socket.emit('move', {gameID: gameID, move: m});
     });
 
+    container.on('click', '.valid-spotter-capture', function(ev) {
+      var m = spotterCapture(ev.target);
+
+      messages.empty();
+      socket.emit('move', {gameID: gameID, move: m});
+    });
+
     // Perform an en passant capture
     container.on('click', '.valid-en-passant-capture', function(ev) {
       var m = capture(ev.target);
@@ -458,6 +475,7 @@ var Client = (function(window) {
         }
       });
     });
+
   };
 
   /**
@@ -531,7 +549,7 @@ var Client = (function(window) {
     }
 
     // Highlight any valid moves
-    squares.removeClass('valid-move valid-swap valid-capture valid-en-passant-capture valid-castle');
+    squares.removeClass('valid-move valid-swap valid-spotter-capture valid-capture valid-en-passant-capture valid-castle');
     for (var i=0; i<gameState.validMoves.length; i++) {
       move = gameState.validMoves[i];
 
@@ -547,6 +565,14 @@ var Client = (function(window) {
             $('#'+move.endSquare).addClass('valid-capture');
           } else {
             $('#'+move.endSquare).addClass('valid-en-passant-capture');
+          }
+        }
+      }
+
+      if (move.type === 'spotterCapture') {
+        if (move.startSquare === square.attr('id')) {
+          if (move.captureSquare === move.endSquare) {
+            $('#'+move.endSquare).addClass('valid-spotter-capture');
           }
         }
       }
@@ -568,6 +594,7 @@ var Client = (function(window) {
     squares.removeClass('selected');
     squares.removeClass('valid-move');
     squares.removeClass('valid-swap');
+    squares.removeClass('valid-spotter-capture');
     squares.removeClass('valid-capture');
     squares.removeClass('valid-en-passant-capture');
     squares.removeClass('valid-castle');
@@ -623,13 +650,36 @@ var Client = (function(window) {
     clearHighlights();
 
     // Move piece on board
-    src.removeClass(getPieceClasses(piece)).addClass('empty');
-    dest.removeClass(gameClasses).addClass(getPieceClasses(piece));
+    /*dest.removeClass(gameClasses).addClass(getPieceClasses(gameState.board[dest.attr('id')], capture=true));
 
+    setTimeout(() => {
+      src.removeClass(getPieceClasses(piece)).addClass('empty');
+      dest.removeClass(gameClasses).addClass(getPieceClasses(piece));
+    }, 2000);
+*/
     // Return move string
     return piece+selection.file+selection.rank+'x'+dest.attr('id');
   };
 
+  var spotterCapture = function(destinationSquare) {
+    var piece = selection.color+selection.piece;
+    var src   = $('#'+selection.file+selection.rank);
+    var dest  = $(destinationSquare);
+
+    clearHighlights();
+
+    // Move piece on board
+    /*dest.removeClass(gameClasses).addClass(getPieceClasses(gameState.board[dest.attr('id')], capture=true));
+
+    setTimeout(() => {
+      src.removeClass(getPieceClasses(piece)).addClass('empty');
+      dest.removeClass(gameClasses).addClass(getPieceClasses(piece));
+    }, 2000);
+  */
+    // Return move string
+    console.log(piece+selection.file+selection.rank+'s'+dest.attr('id') + spotterChoosedPiece+gameState.board[dest.attr('id')][1]);
+    return piece+selection.file+selection.rank+'s'+dest.attr('id') + spotterChoosedPiece+gameState.board[dest.attr('id')][1];
+  };
 
   /**
    * Update UI from game state
@@ -640,6 +690,14 @@ var Client = (function(window) {
     var container, name, status, captures = null;
 
     // Update player info
+
+    if (gameState.validMoves) {
+      for (var i in gameState.validMoves) {
+        if (gameState.validMoves[i].type === 'spotterCapture' && gameState.validMoves[i].guessingPiece === '2') {
+          console.log(gameState.validMoves[i]);
+        }
+      }
+    }
     for (var i=0; i<gameState.players.length; i++) {
 
       // Determine if player is you or opponent
@@ -680,10 +738,32 @@ var Client = (function(window) {
           captures.append('<li class="'+getPieceClasses(gameState.capturedPieces[j])+'"></li>');
         }
       }*/
+
     }
 
     // Update board
     for (var sq in gameState.board) {
+      if (gameState.lastMove) {
+        if (gameState.lastMove.type === 'capture') {
+          if (gameState.lastMove.startSquare === sq) {
+            $('#'+sq).removeClass(gameClasses).addClass(getPieceClasses(gameState.lastMove.pieceCode, captureFlag=true));
+            var pieceClasses1 = getPieceClasses(gameState.board[sq]);
+            var sq1 = sq;
+            setTimeout(() => {
+              $('#'+sq1).removeClass(gameClasses).addClass(pieceClasses1);
+            }, 500)
+            continue;
+          } else if (gameState.lastMove.endSquare === sq) {
+            $('#'+sq).removeClass(gameClasses).addClass(getPieceClasses(gameState.lastMove.capturePiece, captureFlag=true));
+            var pieceClasses2 = getPieceClasses(gameState.board[sq]);
+            var sq2 = sq;
+            setTimeout(() => {
+              $('#'+sq2).removeClass(gameClasses).addClass(pieceClasses2);
+            }, 500)
+            continue;
+          }
+        }
+      }
       $('#'+sq).removeClass(gameClasses).addClass(getPieceClasses(gameState.board[sq]));
     }
 
@@ -773,11 +853,65 @@ var Client = (function(window) {
     forfeitPrompt.modal('show');
   };
 
+  var showSpotterPrompt = function(callback) {
+
+    // Temporarily attach click handler for the Cancel button, note the use of .one()
+
+
+    // Temporarily attach click handler for the Confirm button, note the use of .one()
+
+    spotterChoosePropmpt.one('click', '#choose-2', function(ev) {
+      callback('2');
+      spotterChoosePropmpt.modal('hide');
+    });
+    spotterChoosePropmpt.one('click', '#choose-3', function(ev) {
+      callback('3');
+      spotterChoosePropmpt.modal('hide');
+    });
+    spotterChoosePropmpt.one('click', '#choose-4', function(ev) {
+      callback('4');
+      spotterChoosePropmpt.modal('hide');
+    });
+    spotterChoosePropmpt.one('click', '#choose-5', function(ev) {
+      callback('5');
+      spotterChoosePropmpt.modal('hide');
+    });
+    spotterChoosePropmpt.one('click', '#choose-6', function(ev) {
+      callback('6');
+      spotterChoosePropmpt.modal('hide');
+    });
+    spotterChoosePropmpt.one('click', '#choose-7', function(ev) {
+      callback('7');
+      spotterChoosePropmpt.modal('hide');
+    });
+    spotterChoosePropmpt.one('click', '#choose-8', function(ev) {
+      callback('8');
+      spotterChoosePropmpt.modal('hide');
+    });
+    spotterChoosePropmpt.one('click', '#choose-9', function(ev) {
+      callback('9');
+      spotterChoosePropmpt.modal('hide');
+    });
+    spotterChoosePropmpt.one('click', '#choose-10', function(ev) {
+      callback('t');
+      spotterChoosePropmpt.modal('hide');
+    });
+    spotterChoosePropmpt.one('click', '#choose-spy', function(ev) {
+      callback('y');
+      spotterChoosePropmpt.modal('hide');
+    });
+    spotterChoosePropmpt.one('click', '#choose-spotter', function(ev) {
+      callback('s');
+      spotterChoosePropmpt.modal('hide');
+    });
+
+    spotterChoosePropmpt.modal('show');
+  };
   /**
    * Get the corresponding CSS classes for a given piece
    */
-  var getPieceClasses = function(piece) {
-    if (playerColor === 'blue') {
+  var getPieceClasses = function(piece, captureFlag=false) {
+    if (captureFlag) {
       switch (piece) {
         case 'b1'  : return 'blue el1';
         case 'b2'  : return 'blue el2';
@@ -793,39 +927,6 @@ var Client = (function(window) {
         case 'by'  : return 'blue spy';
         case 'bb'  : return 'blue bomb';
         case 'bf' : return 'blue flag';
-        case 'r1'  : return 'red opponent';
-        case 'r2'  : return 'red opponent';
-        case 'r3'  : return 'red opponent';
-        case 'r4'  : return 'red opponent';
-        case 'r5'  : return 'red opponent';
-        case 'r6'  : return 'red opponent';
-        case 'r7'  : return 'red opponent';
-        case 'r8'  : return 'red opponent';
-        case 'r9'  : return 'red opponent';
-        case 'rt'  : return 'red opponent';
-        case 'rs'  : return 'red opponent';
-        case 'ry'  : return 'red opponent';
-        case 'rf' : return 'red opponent';
-        case 'rb'  : return 'red opponent';
-        case 'w' : return 'water';
-        default    : return 'empty';
-      }
-    } else {
-      switch (piece) {
-        case 'b1'  : return 'blue opponent';
-        case 'b2'  : return 'blue opponent';
-        case 'b3'  : return 'blue opponent';
-        case 'b4'  : return 'blue opponent';
-        case 'b5'  : return 'blue opponent';
-        case 'b6'  : return 'blue opponent';
-        case 'b7'  : return 'blue opponent';
-        case 'b8'  : return 'blue opponent';
-        case 'b9'  : return 'blue opponent';
-        case 'bt'  : return 'blue opponent';
-        case 'bs'  : return 'blue opponent';
-        case 'by'  : return 'blue opponent';
-        case 'bf'  : return 'blue opponent';
-        case 'bb'  : return 'blue opponent';
         case 'r1'  : return 'red el1';
         case 'r2'  : return 'red el2';
         case 'r3'  : return 'red el3';
@@ -842,6 +943,74 @@ var Client = (function(window) {
         case 'rb'  : return 'red bomb';
         case 'w' : return 'water';
         default    : return 'empty';
+      }
+    } else {
+      if (playerColor === 'blue') {
+        switch (piece) {
+          case 'b1'  : return 'blue el1';
+          case 'b2'  : return 'blue el2';
+          case 'b3'  : return 'blue el3';
+          case 'b4'  : return 'blue el4';
+          case 'b5'  : return 'blue el5';
+          case 'b6'  : return 'blue el6';
+          case 'b7'  : return 'blue el7';
+          case 'b8'  : return 'blue el8';
+          case 'b9'  : return 'blue el9';
+          case 'bt'  : return 'blue el10';
+          case 'bs'  : return 'blue spotter';
+          case 'by'  : return 'blue spy';
+          case 'bb'  : return 'blue bomb';
+          case 'bf' : return 'blue flag';
+          case 'r1'  : return 'red opponent';
+          case 'r2'  : return 'red opponent';
+          case 'r3'  : return 'red opponent';
+          case 'r4'  : return 'red opponent';
+          case 'r5'  : return 'red opponent';
+          case 'r6'  : return 'red opponent';
+          case 'r7'  : return 'red opponent';
+          case 'r8'  : return 'red opponent';
+          case 'r9'  : return 'red opponent';
+          case 'rt'  : return 'red opponent';
+          case 'rs'  : return 'red opponent';
+          case 'ry'  : return 'red opponent';
+          case 'rf' : return 'red opponent';
+          case 'rb'  : return 'red opponent';
+          case 'w' : return 'water';
+          default    : return 'empty';
+        }
+      } else {
+        switch (piece) {
+          case 'b1'  : return 'blue opponent';
+          case 'b2'  : return 'blue opponent';
+          case 'b3'  : return 'blue opponent';
+          case 'b4'  : return 'blue opponent';
+          case 'b5'  : return 'blue opponent';
+          case 'b6'  : return 'blue opponent';
+          case 'b7'  : return 'blue opponent';
+          case 'b8'  : return 'blue opponent';
+          case 'b9'  : return 'blue opponent';
+          case 'bt'  : return 'blue opponent';
+          case 'bs'  : return 'blue opponent';
+          case 'by'  : return 'blue opponent';
+          case 'bf'  : return 'blue opponent';
+          case 'bb'  : return 'blue opponent';
+          case 'r1'  : return 'red el1';
+          case 'r2'  : return 'red el2';
+          case 'r3'  : return 'red el3';
+          case 'r4'  : return 'red el4';
+          case 'r5'  : return 'red el5';
+          case 'r6'  : return 'red el6';
+          case 'r7'  : return 'red el7';
+          case 'r8'  : return 'red el8';
+          case 'r9'  : return 'red el9';
+          case 'rt'  : return 'red el10';
+          case 'rs'  : return 'red spotter';
+          case 'ry'  : return 'red spy';
+          case 'rf'  : return 'red flag';
+          case 'rb'  : return 'red bomb';
+          case 'w' : return 'water';
+          default    : return 'empty';
+        }
       }
     }
   };

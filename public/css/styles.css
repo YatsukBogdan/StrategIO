@@ -97,6 +97,7 @@ table { border-collapse: collapse; }
 #board .valid-move:before               { color: #46a546; content: "\25cf"; }
 #board .valid-swap:before               { color: #46a546; }
 #board .valid-capture:before            { color: #46a546;                   }
+#board .valid-spotter-capture:before    { color: #46a546;                   }
 #board .valid-en-passant-capture:before { color: #46a546; content: "\25cf"; }
 #board .valid-castle:before             { color: #46a546; content: "\25cf"; }
 
@@ -113,6 +114,20 @@ table { border-collapse: collapse; }
 /*
  * Pieces
  */
+
+
+ .el1:before    {content: "1"; }
+ .el2:before    {content: "2"; }
+ .el3:before    { content: "3"; }
+ .el4:before    { content: "4"; }
+ .el5:before    { content: "5"; }
+ .el6:before    { content: "6"; }
+ .el7:before    { content: "7"; }
+ .el8:before    { content: "8"; }
+ .el9:before    { content: "9"; }
+ .el10:before    { content: "10"; }
+ .spy:before    { content: "Y"; }
+ .spotter:before    { content: "S"; }
 
 .blue.el1:before    { color: blue; content: "1"; }
 .blue.el2:before    { color: blue; content: "2"; }

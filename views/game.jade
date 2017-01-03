@@ -171,26 +171,23 @@ block content
           .modal-footer
             a.btn.btn-primary(href="/") Continue
 
-    #pawn-promotion.modal.fade(role="dialog")
+    #spotter-choose-piece.modal.fade(role="dialog")
       .modal-dialog
         .modal-content
           .modal-body.text-center
-            form
-              h3 Promote Pawn
-              .btn-group(data-toggle="buttons")
-                label.btn.btn-default.knight
-                  input(type="radio", name="promotion", value="N")
-
-                label.btn.btn-default.bishop
-                  input(type="radio", name="promotion", value="B")
-
-                label.btn.btn-default.rook
-                  input(type="radio", name="promotion", value="R")
-
-                label.btn.btn-default.queen.active
-                  input(type="radio", name="promotion", value="Q", checked="checked")
-          .modal-footer
-            button.btn.btn-primary Promote
+            h3 Choose piece
+            .btn-group
+              button#choose-2.btn.btn-default 2
+              button#choose-3.btn.btn-default 3
+              button#choose-4.btn.btn-default 4
+              button#choose-5.btn.btn-default 5
+              button#choose-6.btn.btn-default 6
+              button#choose-7.btn.btn-default 7
+              button#choose-8.btn.btn-default 8
+              button#choose-9.btn.btn-default 9
+              button#choose-10.btn.btn-default 10
+              button#choose-spy.btn.btn-default Spy
+              button#choose-spotter.btn.btn-default Spotter
 
     #forfeit-game.modal.fade(role="dialog")
       .modal-dialog

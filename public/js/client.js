@@ -649,6 +649,7 @@ var Client = (function(window) {
 
     clearHighlights();
 
+    $('#spotter-guess-field').text('');
     // Move piece on board
     /*dest.removeClass(gameClasses).addClass(getPieceClasses(gameState.board[dest.attr('id')], capture=true));
 
@@ -826,7 +827,6 @@ var Client = (function(window) {
   };
 
   var showSpotterPrompt = function(callback) {
-
     // Temporarily attach click handler for the Cancel button, note the use of .one()
 
 
@@ -834,46 +834,57 @@ var Client = (function(window) {
 
     spotterChoosePropmpt.one('click', '#choose-2', function(ev) {
       callback('2');
+      $('#spotter-guess-field').text('Spotter guess: 2');
       spotterChoosePropmpt.modal('hide');
     });
     spotterChoosePropmpt.one('click', '#choose-3', function(ev) {
       callback('3');
+      $('#spotter-guess-field').text('Spotter guess: 3');
       spotterChoosePropmpt.modal('hide');
     });
     spotterChoosePropmpt.one('click', '#choose-4', function(ev) {
       callback('4');
+      $('#spotter-guess-field').text('Spotter guess: 4');
       spotterChoosePropmpt.modal('hide');
     });
     spotterChoosePropmpt.one('click', '#choose-5', function(ev) {
       callback('5');
+      $('#spotter-guess-field').text('Spotter guess: 5');
       spotterChoosePropmpt.modal('hide');
     });
     spotterChoosePropmpt.one('click', '#choose-6', function(ev) {
       callback('6');
+      $('#spotter-guess-field').text('Spotter guess: 6');
       spotterChoosePropmpt.modal('hide');
     });
     spotterChoosePropmpt.one('click', '#choose-7', function(ev) {
       callback('7');
+      $('#spotter-guess-field').text('Spotter guess: 7');
       spotterChoosePropmpt.modal('hide');
     });
     spotterChoosePropmpt.one('click', '#choose-8', function(ev) {
       callback('8');
+      $('#spotter-guess-field').text('Spotter guess: 8');
       spotterChoosePropmpt.modal('hide');
     });
     spotterChoosePropmpt.one('click', '#choose-9', function(ev) {
       callback('9');
+      $('#spotter-guess-field').text('Spotter guess: 9');
       spotterChoosePropmpt.modal('hide');
     });
     spotterChoosePropmpt.one('click', '#choose-10', function(ev) {
       callback('t');
+      $('#spotter-guess-field').text('Spotter guess: 10');
       spotterChoosePropmpt.modal('hide');
     });
     spotterChoosePropmpt.one('click', '#choose-spy', function(ev) {
       callback('y');
+      $('#spotter-guess-field').text('Spotter guess: spy');
       spotterChoosePropmpt.modal('hide');
     });
     spotterChoosePropmpt.one('click', '#choose-spotter', function(ev) {
       callback('s');
+      $('#spotter-guess-field').text('Spotter guess: spotter');
       spotterChoosePropmpt.modal('hide');
     });
 

@@ -425,7 +425,6 @@ var Client = (function(window) {
     // Perform a regular move
     container.on('click', '.valid-move', function(ev) {
       var m = move(ev.target);
-      console.log(ev.target);
 
       messages.empty();
       socket.emit('move', {gameID: gameID, move: m});
@@ -433,7 +432,6 @@ var Client = (function(window) {
 
     container.on('click', '.valid-swap', function(ev) {
       var m = swap(ev.target);
-      console.log(ev.target);
 
       messages.empty();
       socket.emit('move', {gameID: gameID, move: m});
@@ -535,18 +533,6 @@ var Client = (function(window) {
     squares.removeClass('selected');
     square.addClass('selected');
 
-    var str = '';
-    var i = 0;
-    for (square1 in gameState.board) {
-      str += square1 + ':' + gameState.board[square1] + ' ';
-      if (i == 9) {
-        str += '\n';
-        i = -1;
-        console.log(str);
-        str = '';
-      }
-      i++;
-    }
 
     // Highlight any valid moves
     squares.removeClass('valid-move valid-swap valid-spotter-capture valid-capture valid-en-passant-capture valid-castle');
@@ -608,8 +594,6 @@ var Client = (function(window) {
     var src   = $('#'+selection.file+selection.rank);
     var dest  = $(destinationSquare);
 
-    console.log('#'+selection.file+selection.rank);
-    console.log(destinationSquare);
     clearHighlights();
 
     // Move piece on board
@@ -627,8 +611,6 @@ var Client = (function(window) {
     var new_dest_classes = src.attr('class');
     var new_src_classes  = dest.attr('class');
 
-    console.log(new_dest_classes);
-    console.log(new_src_classes);
 
     src.removeClass().addClass(new_src_classes);
     dest.removeClass().addClass(new_dest_classes);
@@ -636,7 +618,6 @@ var Client = (function(window) {
     clearHighlights();
 
     // Return move string
-    console.log(piece + selection.file + selection.rank + '.' + dest.attr('id'));
     return piece+selection.file + selection.rank + '.' + dest.attr('id');
   }
   /**
@@ -677,7 +658,6 @@ var Client = (function(window) {
     }, 2000);
   */
     // Return move string
-    console.log(piece+selection.file+selection.rank+'s'+dest.attr('id') + spotterChoosedPiece+gameState.board[dest.attr('id')][1]);
     return piece+selection.file+selection.rank+'s'+dest.attr('id') + spotterChoosedPiece+gameState.board[dest.attr('id')][1];
   };
 
@@ -689,15 +669,7 @@ var Client = (function(window) {
 
     var container, name, status, captures = null;
 
-    // Update player info
 
-    if (gameState.validMoves) {
-      for (var i in gameState.validMoves) {
-        if (gameState.validMoves[i].type === 'spotterCapture' && gameState.validMoves[i].guessingPiece === '2') {
-          console.log(gameState.validMoves[i]);
-        }
-      }
-    }
     for (var i=0; i<gameState.players.length; i++) {
 
       // Determine if player is you or opponent

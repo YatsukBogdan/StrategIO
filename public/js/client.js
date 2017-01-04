@@ -21,6 +21,8 @@ var Client = (function(window) {
   var forfeitPrompt       = null;
   var spotterChoosePropmpt = null;
   var spotterChoosedPiece = null;
+  var captureSquareSpotter = null;
+  var capturePieceSpotter = null;
 
 
   /**
@@ -438,17 +440,19 @@ var Client = (function(window) {
       messages.empty();
       socket.emit('move', {gameID: gameID, move: m});
     });
-
+    
     container.on('click', '.valid-spotter-capture', function(ev) {
-      showSpotterPrompt(function(piece){
+      messages.empty();
+      captureSquareSpotter = $(ev.target).attr('id');
+      capturePieceSpotter = gameState.board[$(ev.target).attr('id')][1];
+      showSpotterPrompt(ev.target, function(piece, target){
         spotterChoosedPiece = piece;
-          var m = spotterCapture(ev.target);
-
-          messages.empty();
-          socket.emit('move', {gameID: gameID, move: m});
+        var m = spotterCapture(target);
+        socket.emit('move', {gameID: gameID, move: m});
       });
     });
-
+    
+    
     // Perform an en passant capture
     container.on('click', '.valid-en-passant-capture', function(ev) {
       var m = capture(ev.target);
@@ -508,7 +512,7 @@ var Client = (function(window) {
 
     // Display an error
     socket.on('error', function(data) {
-      showErrorMessage(data);
+      /*showErrorMessage(data);*/
     });
   };
 
@@ -648,8 +652,6 @@ var Client = (function(window) {
     var dest  = $(destinationSquare);
 
     clearHighlights();
-    console.log(gameState.board);
-    console.log(gameState.notvalidmove);
     // Move piece on board
     /*dest.removeClass(gameClasses).addClass(getPieceClasses(gameState.board[dest.attr('id')], capture=true));
 
@@ -659,7 +661,7 @@ var Client = (function(window) {
     }, 2000);
   */
     // Return move string
-    return piece+selection.file+selection.rank+'s'+dest.attr('id') + spotterChoosedPiece+gameState.board[dest.attr('id')][1];
+    return piece+selection.file+selection.rank+'s'+ captureSquareSpotter + spotterChoosedPiece+capturePieceSpotter;
   };
 
   /**
@@ -834,58 +836,59 @@ var Client = (function(window) {
     forfeitPrompt.modal('show');
   };
 
-  var showSpotterPrompt = function(callback) {
+  var showSpotterPrompt = function(target, callback) {
     // Temporarily attach click handler for the Cancel button, note the use of .one()
 
 
     // Temporarily attach click handler for the Confirm button, note the use of .one()
 
-    spotterChoosePropmpt.one('click', '#choose-2', function(ev) {
-      callback('2');
+    spotterChoosePropmpt.on('click', '#choose-2', function(ev) {
+      callback('2', target);
       spotterChoosePropmpt.modal('hide');
     });
-    spotterChoosePropmpt.one('click', '#choose-3', function(ev) {
-      callback('3');
+    spotterChoosePropmpt.on('click', '#choose-3', function(ev) {
+      callback('3', target);
       spotterChoosePropmpt.modal('hide');
     });
-    spotterChoosePropmpt.one('click', '#choose-4', function(ev) {
-      callback('4');
+    spotterChoosePropmpt.on('click', '#choose-4', function(ev) {
+      callback('4', target);
       spotterChoosePropmpt.modal('hide');
     });
-    spotterChoosePropmpt.one('click', '#choose-5', function(ev) {
-      callback('5');
+    spotterChoosePropmpt.on('click', '#choose-5', function(ev) {
+      callback('5', target);
       spotterChoosePropmpt.modal('hide');
     });
-    spotterChoosePropmpt.one('click', '#choose-6', function(ev) {
-      callback('6');
+    spotterChoosePropmpt.on('click', '#choose-6', function(ev) {
+      callback('6', target);
       spotterChoosePropmpt.modal('hide');
     });
-    spotterChoosePropmpt.one('click', '#choose-7', function(ev) {
-      callback('7');
+    spotterChoosePropmpt.on('click', '#choose-7', function(ev) {
+      callback('7', target);
       spotterChoosePropmpt.modal('hide');
     });
-    spotterChoosePropmpt.one('click', '#choose-8', function(ev) {
-      callback('8');
+    spotterChoosePropmpt.on('click', '#choose-8', function(ev) {
+      callback('8', target);
       spotterChoosePropmpt.modal('hide');
     });
-    spotterChoosePropmpt.one('click', '#choose-9', function(ev) {
-      callback('9');
+    spotterChoosePropmpt.on('click', '#choose-9', function(ev) {
+      callback('9', target);
       spotterChoosePropmpt.modal('hide');
     });
-    spotterChoosePropmpt.one('click', '#choose-10', function(ev) {
-      callback('t');
+    spotterChoosePropmpt.on('click', '#choose-10', function(ev) {
+      callback('t', target);
       spotterChoosePropmpt.modal('hide');
     });
-    spotterChoosePropmpt.one('click', '#choose-spy', function(ev) {
-      callback('y');
+    spotterChoosePropmpt.on('click', '#choose-spy', function(ev) {
+      callback('y', target);
       spotterChoosePropmpt.modal('hide');
     });
-    spotterChoosePropmpt.one('click', '#choose-spotter', function(ev) {
-      callback('s');
+    spotterChoosePropmpt.on('click', '#choose-spotter', function(ev) {
+      callback('s', target);
       spotterChoosePropmpt.modal('hide');
     });
 
     spotterChoosePropmpt.modal('show');
+        
   };
   /**
    * Get the corresponding CSS classes for a given piece

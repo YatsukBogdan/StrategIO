@@ -125,8 +125,8 @@ table { border-collapse: collapse; }
 .blue.el8   { background-image: url('../img/blue_8.png'); border: 1px solid black;}
 .blue.el9   { background-image: url('../img/blue_9.png'); border: 1px solid black;}
 .blue.el10   { background-image: url('../img/blue_10.png'); border: 1px solid black;}
-.blue.spotter   { background-image: url('../img/blue_spotter.png'); border: 1px solid black;}
-.blue.spy   { background-image: url('../img/blue_spy.png'); border: 1px solid black;}
+.blue.spotter   { background-image: url('../img/blue_1.png'); border: 1px solid black;}
+.blue.spy   { background-image: url('../img/blue_spotter.png'); border: 1px solid black;}
 .blue.flag   { background-image: url('../img/blue_flag.png'); border: 1px solid black;}
 .blue.bomb   { background-image: url('../img/blue_bomb.png'); border: 1px solid black;}
 
@@ -140,8 +140,8 @@ table { border-collapse: collapse; }
 .red.el8   { background-image: url('../img/red_8.png'); border: 1px solid black;}
 .red.el9   { background-image: url('../img/red_9.png'); border: 1px solid black;}
 .red.el10   { background-image: url('../img/red_10.png'); border: 1px solid black;}
-.red.spotter   { background-image: url('../img/red_spotter.png'); border: 1px solid black;}
-.red.spy   { background-image: url('../img/red_spy.png'); border: 1px solid black;}
+.red.spotter   { background-image: url('../img/red_1.png'); border: 1px solid black;}
+.red.spy   { background-image: url('../img/red_spotter.png'); border: 1px solid black;}
 .red.flag   { background-image: url('../img/red_flag.png'); border: 1px solid black;}
 .red.bomb   { background-image: url('../img/red_bomb.png'); border: 1px solid black;}
 

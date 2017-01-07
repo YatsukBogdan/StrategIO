@@ -5,7 +5,7 @@ table { border-collapse: collapse; }
 
 #startForm, #joinForm { padding: 15px; }
 
-#game { width: 480px; margin: 0 auto 0 auto; }
+#game { width: 480px; margin: 0 auto 0 auto;}
 
 /*
  * Title Bar
@@ -45,7 +45,7 @@ table { border-collapse: collapse; }
   text-align: center;
   vertical-align: bottom;
 }
-
+/*
 #b1, #d1, #f1, #h1, #a2, #c2, #e2, #g2, #b3, #d3, #f3, #h3, #a4, #c4, #e4, #g4,
 #b5, #d5, #f5, #h5, #a6, #c6, #e6, #g6, #b7, #d7, #f7, #h7, #a8, #c8, #e8, #g8,
 #j1, #j3, #j5, #j7, #i2, #i4, #i6, #i8 {
@@ -67,7 +67,7 @@ table { border-collapse: collapse; }
   -moz-box-shadow:inset 0 0 10px rgba(0,0,0,.4);
   -webkit-box-shadow:inset 0 0 10px rgba(0,0,0,.4);
 }
-
+*/
 #board .last-move {
   box-shadow: inset 0 0 0 3px #8E55DF;
   -moz-box-shadow: inset 0 0 0 3px #8E55DF;
@@ -94,10 +94,10 @@ table { border-collapse: collapse; }
 #board .bottom-left-corner  { background: url("../img/board-corners.png") top right;    }
 
 #board .selected                        { color: #049cdb;                   }
-#board .valid-move:before               { color: #46a546; content: "\25cf"; }
-#board .valid-swap:before               { color: #46a546; }
-#board .valid-capture:before            { color: #46a546;                   }
-#board .valid-spotter-capture:before    { color: #46a546;                   }
+#board .valid-move               { background-image: url('../img/valid_move.png'); border: 1px solid black;}
+#board .valid-swap               { border: 1px dashed black; }
+#board .valid-capture            { background-image: url('../img/valid_capture.png'); border: 1px solid black;}
+#board .valid-spotter-capture            { background-image: url('../img/valid_capture.png'); border: 1px solid black;}
 #board .valid-en-passant-capture:before { color: #46a546; content: "\25cf"; }
 #board .valid-castle:before             { color: #46a546; content: "\25cf"; }
 
@@ -115,48 +115,37 @@ table { border-collapse: collapse; }
  * Pieces
  */
 
+.empty { background-image: url('../img/empty.png'); border: 1px solid black;}
+.blue.el2   { background-image: url('../img/blue_2.png'); border: 1px solid black;}
+.blue.el3   { background-image: url('../img/blue_3.png'); border: 1px solid black;}
+.blue.el4   { background-image: url('../img/blue_4.png'); border: 1px solid black;}
+.blue.el5   { background-image: url('../img/blue_5.png'); border: 1px solid black;}
+.blue.el6   { background-image: url('../img/blue_6.png'); border: 1px solid black;}
+.blue.el7   { background-image: url('../img/blue_7.png'); border: 1px solid black;}
+.blue.el8   { background-image: url('../img/blue_8.png'); border: 1px solid black;}
+.blue.el9   { background-image: url('../img/blue_9.png'); border: 1px solid black;}
+.blue.el10   { background-image: url('../img/blue_10.png'); border: 1px solid black;}
+.blue.spotter   { background-image: url('../img/blue_spotter.png'); border: 1px solid black;}
+.blue.spy   { background-image: url('../img/blue_spy.png'); border: 1px solid black;}
+.blue.flag   { background-image: url('../img/blue_flag.png'); border: 1px solid black;}
+.blue.bomb   { background-image: url('../img/blue_bomb.png'); border: 1px solid black;}
 
- .el1:before    {content: "1"; }
- .el2:before    {content: "2"; }
- .el3:before    { content: "3"; }
- .el4:before    { content: "4"; }
- .el5:before    { content: "5"; }
- .el6:before    { content: "6"; }
- .el7:before    { content: "7"; }
- .el8:before    { content: "8"; }
- .el9:before    { content: "9"; }
- .el10:before    { content: "10"; }
- .spy:before    { content: "Y"; }
- .spotter:before    { content: "S"; }
 
-.blue.el1:before    { color: blue; content: "1"; }
-.blue.el2:before    { color: blue; content: "2"; }
-.blue.el3:before    { color: blue; content: "3"; }
-.blue.el4:before    { color: blue; content: "4"; }
-.blue.el5:before    { color: blue; content: "5"; }
-.blue.el6:before    { color: blue; content: "6"; }
-.blue.el7:before    { color: blue; content: "7"; }
-.blue.el8:before    { color: blue; content: "8"; }
-.blue.el9:before    { color: blue; content: "9"; }
-.blue.el10:before    { color: blue; content: "10"; }
-.blue.spy:before    { color: blue; content: "Y"; }
-.blue.spotter:before    { color: blue; content: "S"; }
-.water:before    { color: blue; content: "W"; }
-.red.el1:before    { color: red; content: "1"; }
-.red.el2:before    { color: red; content: "2"; }
-.red.el3:before    { color: red; content: "3"; }
-.red.el4:before    { color: red; content: "4"; }
-.red.el5:before    { color: red; content: "5"; }
-.red.el6:before    { color: red; content: "6"; }
-.red.el7:before    { color: red; content: "7"; }
-.red.el8:before    { color: red; content: "8"; }
-.red.el9:before    { color: red; content: "9"; }
-.red.el10:before    { color: red; content: "10"; }
-.red.spy:before    { color: red; content: "Y"; }
-.red.spotter:before    { color: red; content: "S"; }
-.red.opponent:before    { color: red; content: "?"; }
-.blue.opponent:before    { color: blue; content: "?"; }
-.red.bomb:before    { color: red; content: "B"; }
-.blue.bomb:before    { color: blue; content: "B"; }
-.red.flag:before    { color: red; content: "F"; }
-.blue.flag:before    { color: blue; content: "F"; }
+.red.el2   { background-image: url('../img/red_2.png'); border: 1px solid black;}
+.red.el3   { background-image: url('../img/red_3.png'); border: 1px solid black;}
+.red.el4   { background-image: url('../img/red_4.png'); border: 1px solid black;}
+.red.el5   { background-image: url('../img/red_5.png'); border: 1px solid black;}
+.red.el6   { background-image: url('../img/red_6.png'); border: 1px solid black;}
+.red.el7   { background-image: url('../img/red_7.png'); border: 1px solid black;}
+.red.el8   { background-image: url('../img/red_8.png'); border: 1px solid black;}
+.red.el9   { background-image: url('../img/red_9.png'); border: 1px solid black;}
+.red.el10   { background-image: url('../img/red_10.png'); border: 1px solid black;}
+.red.spotter   { background-image: url('../img/red_spotter.png'); border: 1px solid black;}
+.red.spy   { background-image: url('../img/red_spy.png'); border: 1px solid black;}
+.red.flag   { background-image: url('../img/red_flag.png'); border: 1px solid black;}
+.red.bomb   { background-image: url('../img/red_bomb.png'); border: 1px solid black;}
+
+.red.opponent   { background-image: url('../img/red_opponent.png'); border: 1px solid black;}
+.blue.opponent   { background-image: url('../img/blue_opponent.png'); border: 1px solid black;}
+
+.water   { background-image: url('../img/water.png'); border: 1px solid black;}

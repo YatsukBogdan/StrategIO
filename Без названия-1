@@ -1,0 +1,15 @@
+function somePaitWork(toBool, list) {
+  for (var i in list) {
+    for (var pair in list[i]) {
+      if (toBool(list[i][pair].a) && toBool(list[i][pair].b))
+      return true;
+    }
+  }
+  return false;
+}
+
+function toBool(a) {
+  if (a)
+    return true;
+  return false;
+}
